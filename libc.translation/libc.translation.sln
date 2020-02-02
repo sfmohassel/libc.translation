@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libc.translation", "libc.translation.csproj", "{A9C971E0-100F-466C-B3F9-C0875B430346}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libc.translation.tests", "..\libc.translation.tests\libc.translation.tests.csproj", "{7B36AF46-F577-4AA1-B204-EF7DEE295E1C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A9C971E0-100F-466C-B3F9-C0875B430346}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9C971E0-100F-466C-B3F9-C0875B430346}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9C971E0-100F-466C-B3F9-C0875B430346}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9C971E0-100F-466C-B3F9-C0875B430346}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B36AF46-F577-4AA1-B204-EF7DEE295E1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B36AF46-F577-4AA1-B204-EF7DEE295E1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B36AF46-F577-4AA1-B204-EF7DEE295E1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B36AF46-F577-4AA1-B204-EF7DEE295E1C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5EDAEB2E-87A9-42C0-8273-F20128D58F91}
+	EndGlobalSection
+EndGlobal

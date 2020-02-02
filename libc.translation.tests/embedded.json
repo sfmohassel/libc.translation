@@ -1,0 +1,14 @@
+﻿{
+  "ar": {
+    "InvalidInput": "إدخال غير صالح",
+    "UnknownError": "خطأ غير معروف {0}"
+  },
+  "fa": {
+    "InvalidInput": "خطا در اطلاعات ورودی",
+    "UnknownError": "خطای نامشخص {0}"
+  },
+  "en": {
+    "InvalidInput": "Invalid input",
+    "UnknownError": "Unknown error {0}"
+  }
+}
