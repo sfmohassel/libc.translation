@@ -1,2 +1,82 @@
 # libc.translation
 A library to help you implement translation using json files to replace .resx files in .net standard projects
+
+## Why we need this?
+Have you ever got tired of using .resx files in visual studio?
+<br/>
+Do you want to have i18n json files for localizing your projects?
+<br/>
+Do you hate sattelite assemblies alongside your application files like me?
+<br/>
+If yes, then this is for you :-)
+
+## How does it work?
+
+2- Then we need an `ILocalizationSource` instance. This instance can be created using the default `LocalizationSource` class.
+<br/>
+`LocalizationSource` class enables us to load a json file containing all our translations from three different sources:
+- A file on disk
+```
+ILocalizationSource source = new LocalizationSource(new FileInfo("<path to json file>"));
+```
+- An stream object
+```
+Stream stream = new FileInfo("<path to json file>").OpenRead();
+ILocalizationSource source = new LocalizationSource(stream);
+```
+- An embedded json file in assembly
+```
+Assembly assembly = Assembly.GetExecutingAssembly();
+string resourceId = "libc.translations.tests.embedded.json";
+ILocalizationSource source = new LocalizationSource(assembly, resourceId);
+```
+
+3- Then we need an `ILocalizer` instance. This instance can be created using the default `Localizer` class.
+<br/>
+`Localizer` class enables us to pass an `ILocalizationSource` object and a __fallback culture__ (which defaults to "en" value).
+```
+ILocalizer localizer = new Localizer(source, "en");
+```
+
+4- Now there are some methods to obtain desired translation text using a culture and a key.
+- Suppose we have create an i18n json file like this:
+```
+{
+  "ar": {
+    "InvalidInput": "إدخال غير صالح",
+    "UnknownError": "خطأ غير معروف {0}"
+  },
+  "fa": {
+    "InvalidInput": "خطا در اطلاعات ورودی",
+    "UnknownError": "خطای نامشخص {0}"
+  },
+  "en": {
+    "InvalidInput": "Invalid input",
+    "UnknownError": "Unknown error {0}"
+  }
+}
+```
+- Set current thread's culture (this is actually not needed):
+```
+CultureInfo.CurrentCulture = new CultureInfo("ar");
+```
+- Get a translation text for a culture and key. If the text for the given culture is not found, fallback culture is used: (key is case-insensitive)
+```
+var text = localizer.Get("fa", "InvalidInput");
+// text is: خطا در اطلاعات ورودی
+```
+- Get a translation text for a key and thread's current culture. If the text for the given culture is not found, fallback culture is used: (key is case-insensitive)
+```
+var text = localizer.Get("InvalidInput");
+// text is (if thread culture is "ar"): إدخال غير صالح
+```
+- Get a formatted translation text for a culture and key. If the text for the given culture is not found, fallback culture is used: (key is case-insensitive)
+```
+var text = localizer.GetFormat("en", "unknownerror", "!!!");
+// text is: Unknown error !!!
+```
+- Get a formatted translation text for a key and thread's current culture. If the text for the given culture is not found, fallback culture is used: (key is case-insensitive)
+```
+var text = localizer.GetFormat("unknownerror", "!!!");
+// text is: خطأ غير معروف !!!
+```
