@@ -11,7 +11,7 @@ Do you hate sattelite assemblies alongside your application files like me?
 If yes, then this is for you :-)
 
 ## How does it work?
-
+1- Add [this nuget package](https://www.nuget.org/packages/libc.translation/)
 2- Then we need an `ILocalizationSource` instance. This instance can be created using the default `LocalizationSource` class.
 <br/>
 `LocalizationSource` class enables us to load a json file containing all our translations from three different sources:
