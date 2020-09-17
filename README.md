@@ -1,6 +1,9 @@
 # libc.translation
 A library to help you implement translation using json files to replace .resx files in .net standard projects
 
+## Breaking Changes:
+From version 3.0.0 onwards the library only depends on [System.Text.Json](https://www.nuget.org/packages/System.Text.Json).
+
 ## Understand the code:
 You can read this [article](https://medium.com/@saeidfarahi/c-how-to-use-a-simple-form-of-i18n-instead-of-resource-files-resx-files-26eec9460a88) to understand how the code works.
 

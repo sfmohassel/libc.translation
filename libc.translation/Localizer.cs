@@ -39,20 +39,20 @@ namespace libc.translation {
             return GetFormat(getThreadCulture(), key, values);
         }
         /// <inheritdoc />
-        public Dictionary<string, string> GetAll(string culture) {
+        public IDictionary<string, string> GetAll(string culture) {
             return Source.GetAll(culture) ?? Source.GetAll(FallbackCulture);
         }
         /// <inheritdoc />
-        public Dictionary<string, string> GetAll() {
+        public IDictionary<string, string> GetAll() {
             return GetAll(getThreadCulture());
         }
         private static string getThreadCulture() {
             return CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower();
         }
         private bool get(string culture, string key, out string value) {
-            var fallbackValue = Source.Get(FallbackCulture, key);
             value = Source.Get(culture.ToLower(), key);
             if (value == null) {
+                var fallbackValue = Source.Get(FallbackCulture, key);
                 if (fallbackValue == null) {
                     value = key;
                     return false;
