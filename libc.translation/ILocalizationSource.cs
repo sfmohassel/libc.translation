@@ -12,6 +12,6 @@ namespace libc.translation {
         /// Returns all translations of the given culture
         /// </summary>
         /// <returns></returns>
-        Dictionary<string, string> GetAll(string culture);
+        IDictionary<string, string> GetAll(string culture);
     }
 }

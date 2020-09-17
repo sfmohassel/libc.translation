@@ -1,52 +1,128 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 namespace libc.translation {
     public class LocalizationSource : ILocalizationSource {
-        private readonly JObject root;
-        public LocalizationSource(JObject root) {
-            this.root = root;
+        private readonly LocalizationSourcePropertyCaseSensitivity caseSensitivity;
+        private readonly JsonElement root;
+        private static JsonElement getRootElement(JsonDocument jsonDocument) {
+            // see: https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-migrate-from-newtonsoft-how-to#jsondocument-is-idisposable
+            // to understand the following line
+            return jsonDocument.RootElement.Clone();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jsonDocument">The json document. You freely can dispose json document after calling this constructor.</param>
+        /// <param name="caseSensitivity">Case sensitivity when searching for property names</param>
+        public LocalizationSource(JsonDocument jsonDocument, LocalizationSourcePropertyCaseSensitivity caseSensitivity) {
+            this.caseSensitivity = caseSensitivity;
+            root = getRootElement(jsonDocument);
         }
         /// <summary>
         /// Load localization texts from and embedded json file
         /// </summary>
         /// <param name="assembly"></param>
         /// <param name="resourceId"></param>
-        public LocalizationSource(Assembly assembly, string resourceId) {
+        /// <param name="caseSensitivity">Case sensitivity when searching for property names</param>
+        /// <param name="jsonMaxDepth"><see cref="JsonDocumentOptions.MaxDepth"/></param>
+        public LocalizationSource(Assembly assembly, string resourceId, LocalizationSourcePropertyCaseSensitivity caseSensitivity,
+            int jsonMaxDepth = 128) {
+            this.caseSensitivity = caseSensitivity;
             var em = new EmbdRes(assembly);
-            root = JObject.Parse(em.ReadAsString(resourceId));
+            var json = em.ReadAsString(resourceId);
+            root = toRootElement(json, jsonMaxDepth);
         }
         /// <summary>
         /// Load localization texts from an <see cref="Stream"/>
         /// </summary>
         /// <param name="stream"></param>
-        public LocalizationSource(Stream stream) {
+        /// <param name="caseSensitivity">Case sensitivity when searching for property names</param>
+        /// <param name="jsonMaxDepth"><see cref="JsonDocumentOptions.MaxDepth"/></param>
+        public LocalizationSource(Stream stream, LocalizationSourcePropertyCaseSensitivity caseSensitivity,
+            int jsonMaxDepth = 128) {
+            this.caseSensitivity = caseSensitivity;
+            string json;
             using (var sr = new StreamReader(stream)) {
-                root = JObject.Parse(sr.ReadToEnd());
+                json = sr.ReadToEnd();
             }
+            root = toRootElement(json, jsonMaxDepth);
         }
         /// <summary>
         /// Load localization texts from a json file residing on the disk
         /// </summary>
         /// <param name="file"></param>
-        public LocalizationSource(FileInfo file) {
-            root = JObject.Parse(File.ReadAllText(file.FullName));
+        /// <param name="caseSensitivity">Case sensitivity when searching for property names</param>
+        /// <param name="jsonMaxDepth"><see cref="JsonDocumentOptions.MaxDepth"/></param>
+        public LocalizationSource(FileInfo file, LocalizationSourcePropertyCaseSensitivity caseSensitivity,
+            int jsonMaxDepth = 128) {
+            this.caseSensitivity = caseSensitivity;
+            var json = File.ReadAllText(file.FullName);
+            root = toRootElement(json, jsonMaxDepth);
+        }
+        private JsonElement toRootElement(string json, int jsonMaxDepth) {
+            var doc = JsonDocument.Parse(json, new JsonDocumentOptions {
+                AllowTrailingCommas = true,
+                CommentHandling = JsonCommentHandling.Skip,
+                MaxDepth = jsonMaxDepth
+            });
+            using (doc) {
+                return getRootElement(doc);
+            }
         }
         /// <inheritdoc />
         public string Get(string culture, string key) {
-            if (!root.ContainsKey(culture)) return null;
-            var j = (JObject) root[culture];
-            if (!j.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out var res)) return null;
-            return res.Value<string>();
+            // try to find {culture} element inside root
+            if (!tryFindCultureElement(culture, out var cultureElement)) {
+                return null;
+            }
+            if (caseSensitivity == LocalizationSourcePropertyCaseSensitivity.CaseInsensitive) {
+                return getCaseInsensitive(cultureElement, key);
+            }
+            return getCaseSensitive(cultureElement, key);
+        }
+        private bool tryFindCultureElement(string culture, out JsonElement cultureElement) {
+            cultureElement = default;
+            if (caseSensitivity == LocalizationSourcePropertyCaseSensitivity.CaseInsensitive) {
+                foreach (var x in root.EnumerateObject()) {
+                    if (x.Name.Equals(culture, StringComparison.OrdinalIgnoreCase)) {
+                        cultureElement = root.GetProperty(x.Name);
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return root.TryGetProperty(culture, out cultureElement);
+        }
+        private static string getCaseSensitive(JsonElement cultureElement, string key) {
+            return !cultureElement.TryGetProperty(key, out var res) ? null : res.GetString();
+        }
+        private static string getCaseInsensitive(JsonElement cultureElement, string key) {
+            foreach (var x in cultureElement.EnumerateObject()) {
+                if (x.Name.Equals(key, StringComparison.OrdinalIgnoreCase)) {
+                    var res = cultureElement.GetProperty(x.Name);
+                    return res.GetString();
+                }
+            }
+            return null;
         }
         /// <inheritdoc />
-        public Dictionary<string, string> GetAll(string culture) {
-            if (!root.ContainsKey(culture)) return null;
-            var j = (IDictionary<string, JToken>) root[culture];
-            return j.ToDictionary(a => a.Key, a => a.Value.Value<string>());
+        public IDictionary<string, string> GetAll(string culture) {
+            // try to find {culture} element inside root
+            if (!tryFindCultureElement(culture, out var cultureElement)) {
+                return null;
+            }
+            var res = new Dictionary<string, string>();
+            foreach (var x in cultureElement.EnumerateObject()) {
+                res[x.Name] = x.Value.GetString();
+            }
+            return res;
         }
+    }
+    public enum LocalizationSourcePropertyCaseSensitivity {
+        CaseSensitive,
+        CaseInsensitive
     }
 }
