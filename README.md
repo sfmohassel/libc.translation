@@ -86,3 +86,7 @@ var text = localizer.GetFormat("en", "unknownerror", "!!!");
 var text = localizer.GetFormat("unknownerror", "!!!");
 // text is: خطأ غير معروف !!!
 ```
+
+## Contribution
+
+This repository belongs to the community and will always appreciate any contribution
