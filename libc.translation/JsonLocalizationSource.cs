@@ -153,10 +153,9 @@ namespace libc.translation
 
         private bool TryFindCultureElement(string culture, out JsonElement cultureElement)
         {
-            if (caseSensitivity != PropertyCaseSensitivity.CaseInsensitive)
-                return root.TryGetProperty(culture, out cultureElement);
-
-            return TryGetPropertyByKeyCaseInsensitive(root, culture, out cultureElement);
+            return caseSensitivity != PropertyCaseSensitivity.CaseInsensitive
+                ? root.TryGetProperty(culture, out cultureElement)
+                : TryGetPropertyByKeyCaseInsensitive(root, culture, out cultureElement);
         }
 
         private static string GetCaseSensitive(JsonElement cultureElement, string key)
@@ -190,7 +189,7 @@ namespace libc.translation
 
             foreach (var property in properties)
             {
-                if (!TryGetPropertyByKeyCaseInsensitive(cultureElement, property, out current))
+                if (!TryGetPropertyByKeyCaseInsensitive(current, property, out current))
                 {
                     return null;
                 }

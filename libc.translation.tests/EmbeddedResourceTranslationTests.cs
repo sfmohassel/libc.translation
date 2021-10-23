@@ -138,9 +138,42 @@ namespace libc.translation.tests
         }
 
         [Fact]
-        public void Nested()
+        public void Nested_CaseSensitive()
         {
             var localizer = GetLocalizer(caseSensitivity: PropertyCaseSensitivity.CaseSensitive);
+
+            // set thread's current culture
+            CultureInfo.CurrentCulture = new CultureInfo(name: "de");
+
+            Assert.Equal(
+                expected: "Willkommen",
+                actual: localizer.Get(key: "home-page.title"),
+                comparer: StringComparer.Ordinal
+            );
+
+            Assert.Equal(
+                expected: "أهلا بك",
+                actual: localizer.Get(culture: "ar", key: "home-page.title"),
+                comparer: StringComparer.Ordinal
+            );
+
+            Assert.Equal(
+                expected: "Etwas Text",
+                actual: localizer.Get(key: "home-page.body.text"),
+                comparer: StringComparer.Ordinal
+            );
+
+            Assert.Equal(
+                expected: "بعض النصوص",
+                actual: localizer.Get(culture: "ar", key: "home-page.body.text"),
+                comparer: StringComparer.Ordinal
+            );
+        }
+
+        [Fact]
+        public void Nested_CaseInsensitive()
+        {
+            var localizer = GetLocalizer(caseSensitivity: PropertyCaseSensitivity.CaseInsensitive);
 
             // set thread's current culture
             CultureInfo.CurrentCulture = new CultureInfo(name: "de");
