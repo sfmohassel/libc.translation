@@ -3,6 +3,7 @@ using System.Globalization;
 
 namespace libc.translation
 {
+
     public class Localizer : ILocalizer
     {
         /// <summary>
@@ -34,7 +35,7 @@ namespace libc.translation
         /// <inheritdoc />
         public string Get(string culture, string key)
         {
-            get(culture, key, out var res);
+            Get(culture, key, out var res);
 
             return res;
         }
@@ -42,13 +43,13 @@ namespace libc.translation
         /// <inheritdoc />
         public string Get(string key)
         {
-            return Get(getThreadCulture(), key);
+            return Get(GetThreadCulture(), key);
         }
 
         /// <inheritdoc />
         public string GetFormat(string culture, string key, params object[] values)
         {
-            var found = get(culture, key, out var res);
+            var found = Get(culture, key, out var res);
 
             return found ? string.Format(res, values) : res;
         }
@@ -56,7 +57,7 @@ namespace libc.translation
         /// <inheritdoc />
         public string GetFormat(string key, params object[] values)
         {
-            return GetFormat(getThreadCulture(), key, values);
+            return GetFormat(GetThreadCulture(), key, values);
         }
 
         /// <inheritdoc />
@@ -68,35 +69,33 @@ namespace libc.translation
         /// <inheritdoc />
         public IDictionary<string, string> GetAll()
         {
-            return GetAll(getThreadCulture());
+            return GetAll(GetThreadCulture());
         }
 
-        private static string getThreadCulture()
+        private static string GetThreadCulture()
         {
             return CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower();
         }
 
-        private bool get(string culture, string key, out string value)
+        private bool Get(string culture, string key, out string value)
         {
             value = Source.Get(culture.ToLower(), key);
 
-            if (value == null)
+            if (value != null) return true;
+
+            var fallbackValue = Source.Get(FallbackCulture, key);
+
+            if (fallbackValue == null)
             {
-                var fallbackValue = Source.Get(FallbackCulture, key);
+                value = key;
 
-                if (fallbackValue == null)
-                {
-                    value = key;
-
-                    return false;
-                }
-
-                value = fallbackValue;
-
-                return true;
+                return false;
             }
+
+            value = fallbackValue;
 
             return true;
         }
     }
+
 }

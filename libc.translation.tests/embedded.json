@@ -1,14 +1,32 @@
 ﻿{
   "ar": {
     "InvalidInput": "إدخال غير صالح",
-    "UnknownError": "خطأ غير معروف {0}"
+    "UnknownError": "خطأ غير معروف {0}",
+    "home-page": {
+      "title": "أهلا بك",
+      "body": {
+        "text": "بعض النصوص"
+      } 
+    } 
   },
-  "fa": {
-    "InvalidInput": "خطا در اطلاعات ورودی",
-    "UnknownError": "خطای نامشخص {0}"
+  "de": {
+    "InvalidInput": "Ungültige Eingabe",
+    "UnknownError": "Unbekannter Fehler {0}",
+    "home-page": {
+      "title": "Willkommen",
+      "body": {
+        "text": "Etwas Text"
+      }
+    }
   },
   "en": {
     "InvalidInput": "Invalid input",
-    "UnknownError": "Unknown error {0}"
+    "UnknownError": "Unknown error {0}",
+    "home-page": {
+      "title": "Welcome",
+      "body": {
+        "text": "Some text"
+      }
+    }
   }
 }
