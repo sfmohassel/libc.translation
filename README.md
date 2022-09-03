@@ -31,14 +31,14 @@ If yes, then this is for you :-)
   - A file on disk
   
   ```csharp
-  ILocalizationSource source = new JsonLocalizationSource(new FileInfo("<path to json file>"));
+  ILocalizationSource source = new JsonLocalizationSource(new FileInfo("<path to json file>"), PropertyCaseSensitivity.CaseSensitive);
   ```
   
   - An stream object
   
   ```csharp
   Stream stream = new FileInfo("<path to json file>").OpenRead();
-  ILocalizationSource source = new JsonLocalizationSource(stream);
+  ILocalizationSource source = new JsonLocalizationSource(stream, PropertyCaseSensitivity.CaseSensitive);
   ```
   
   - An embedded json file in assembly
@@ -46,7 +46,7 @@ If yes, then this is for you :-)
   ```csharp
   Assembly assembly = Assembly.GetExecutingAssembly();
   string resourceId = "libc.translations.tests.embedded.json";
-  ILocalizationSource source = new JsonLocalizationSource(assembly, resourceId);
+  ILocalizationSource source = new JsonLocalizationSource(assembly, resourceId, PropertyCaseSensitivity.CaseSensitive);
   ```
 
 - Then we need an `ILocalizer` instance. This instance can be created using the default `Localizer` class.
