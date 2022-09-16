@@ -5,16 +5,8 @@
 
     <IsPackable>false</IsPackable>
 
-    <Version>6.0.1</Version>
+    <Version>6.1.2</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="embedded.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="embedded.json" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.1" />
@@ -31,6 +23,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\libc.translation\libc.translation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="sample.json" />
+    <EmbeddedResource Include="sample.json" />
   </ItemGroup>
 
 </Project>

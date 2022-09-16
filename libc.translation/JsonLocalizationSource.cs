@@ -35,7 +35,7 @@ namespace libc.translation
             int jsonMaxDepth = 128)
         {
             this.caseSensitivity = caseSensitivity;
-            var em = new EmbdRes(assembly);
+            var em = new EmbeddedResource(assembly);
             var json = em.ReadAsString(resourceId);
             root = ToRootElement(json, jsonMaxDepth);
         }

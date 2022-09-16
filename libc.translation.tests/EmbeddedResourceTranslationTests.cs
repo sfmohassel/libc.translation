@@ -5,7 +5,6 @@ using Xunit;
 
 namespace libc.translation.tests
 {
-
     public class EmbeddedResourceTranslationTests
     {
         private static ILocalizer GetLocalizer(PropertyCaseSensitivity caseSensitivity)
@@ -13,7 +12,7 @@ namespace libc.translation.tests
             return new Localizer(
                 source: new JsonLocalizationSource(
                     assembly: Assembly.GetExecutingAssembly(),
-                    resourceId: $"{typeof(EmbeddedResourceTranslationTests).Namespace}.embedded.json",
+                    resourceId: $"{typeof(EmbeddedResourceTranslationTests).Namespace}.sample.json",
                     caseSensitivity: caseSensitivity
                 )
             );
@@ -240,5 +239,4 @@ namespace libc.translation.tests
             );
         }
     }
-
 }
