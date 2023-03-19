@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net5.0;net6.0;net7.0</TargetFrameworks>
-		<Version>7.0.0</Version>
+		<Version>7.0.1</Version>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>Saeid Farahi Mohassel</Authors>
 		<Product>A library to help you implement translation using json files to replace .resx files in .net standard projects</Product>
