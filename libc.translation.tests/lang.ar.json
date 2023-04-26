@@ -1,0 +1,10 @@
+{
+  "InvalidInput": "إدخال غير صالح",
+  "UnknownError": "خطأ غير معروف {0}",
+  "home-page": {
+    "title": "أهلا بك",
+    "body": {
+      "text": "بعض النصوص"
+    }
+  }
+}

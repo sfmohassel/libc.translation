@@ -28,6 +28,15 @@
   <ItemGroup>
     <None Remove="sample.json" />
     <EmbeddedResource Include="sample.json" />
+    <None Update="lang.de.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lang.en.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lang.ar.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

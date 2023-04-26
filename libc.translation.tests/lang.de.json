@@ -1,0 +1,10 @@
+{
+  "InvalidInput": "Ungültige Eingabe",
+  "UnknownError": "Unbekannter Fehler {0}",
+  "home-page": {
+    "title": "Willkommen",
+    "body": {
+      "text": "Etwas Text"
+    }
+  }
+}
