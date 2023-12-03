@@ -2,14 +2,14 @@
 
 A library to help you implement translation using json files to replace .resx files in .net standard projects
 
-## Breaking and important changes:
+## Breaking and important changes
 
 - From version 3.0.0 onwards the library only depends on [System.Text.Json](https://www.nuget.org/packages/System.Text.Json).
 - From version 5.0.0 onwards `LocalizationSource` is renamed to `JsonLocalizationSource` to better reflect the purpose of the class. From this version we support nested objects (look below the example)
 
-## Understand the code:
+## Understand the code
 
-You can read this [article](https://medium.com/@saeidfarahi/c-how-to-use-a-simple-form-of-i18n-instead-of-resource-files-resx-files-26eec9460a88) to understand how the code works.
+You can read this [article](https://sfmohassel.medium.com/c-how-to-use-a-simple-form-of-i18n-instead-of-resource-files-resx-files-26eec9460a88) to understand how the code works.
 
 ## Why we need this?
 
@@ -26,6 +26,7 @@ If yes, then this is for you :-)
 - Add [this nuget package](https://www.nuget.org/packages/libc.translation/)
 - Then we need an `ILocalizationSource` instance. This instance can be created using the default `JsonLocalizationSource` class.
 <br/>
+
 `JsonLocalizationSource` class enables us to load a json file containing all our translations from three different sources:
 
   - A file on disk
@@ -51,6 +52,7 @@ If yes, then this is for you :-)
 
 - Then we need an `ILocalizer` instance. This instance can be created using the default `Localizer` class.
 <br/>
+
 `Localizer` class enables us to pass an `ILocalizationSource` object and a __fallback culture__ (which defaults to "en" value).
 
 ```csharp
