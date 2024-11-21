@@ -3,240 +3,239 @@ using System.Globalization;
 using System.Reflection;
 using Xunit;
 
-namespace libc.translation.tests
+namespace libc.translation.tests;
+
+public class EmbeddedResourceTranslationTests
 {
-  public class EmbeddedResourceTranslationTests
+  private static ILocalizer GetLocalizer(PropertyCaseSensitivity caseSensitivity)
   {
-    private static ILocalizer GetLocalizer(PropertyCaseSensitivity caseSensitivity)
-    {
-      return new Localizer(
-          source: new JsonLocalizationSource(
-              assembly: Assembly.GetExecutingAssembly(),
-              resourceId: $"{typeof(EmbeddedResourceTranslationTests).Namespace}.sample.json",
-              caseSensitivity: caseSensitivity
-          )
-      );
-    }
+    return new Localizer(
+      new JsonLocalizationSource(
+        Assembly.GetExecutingAssembly(),
+        $"{typeof(EmbeddedResourceTranslationTests).Namespace}.sample.json",
+        caseSensitivity
+      )
+    );
+  }
 
-    [Fact]
-    public void CaseInsensitive()
-    {
-      var localizer = GetLocalizer(caseSensitivity: PropertyCaseSensitivity.CaseInsensitive);
+  [Fact]
+  public void CaseInsensitive()
+  {
+    var localizer = GetLocalizer(PropertyCaseSensitivity.CaseInsensitive);
 
-      // first....................................................
-      const string key1 = "InvalidInput";
+    // first....................................................
+    const string key1 = "InvalidInput";
 
-      // set thread's current culture to "ar"
-      CultureInfo.CurrentCulture = new CultureInfo(name: "ar");
+    // set thread's current culture to "ar"
+    CultureInfo.CurrentCulture = new CultureInfo("ar");
 
-      Assert.Equal(
-          expected: "إدخال غير صالح",
-          actual: localizer.Get(key: key1),
-          comparer: StringComparer.Ordinal
-      );
+    Assert.Equal(
+      "إدخال غير صالح",
+      localizer.Get(key1),
+      StringComparer.Ordinal
+    );
 
-      Assert.Equal(
-          expected: "Ungültige Eingabe",
-          actual: localizer.Get(culture: "de", key: key1),
-          comparer: StringComparer.Ordinal
-      );
+    Assert.Equal(
+      "Ungültige Eingabe",
+      localizer.Get("de", key1),
+      StringComparer.Ordinal
+    );
 
-      // set threads current culture to "en"
-      CultureInfo.CurrentCulture = new CultureInfo(name: "en");
+    // set threads current culture to "en"
+    CultureInfo.CurrentCulture = new CultureInfo("en");
 
-      Assert.Equal(
-          expected: "Invalid input",
-          actual: localizer.Get(key: key1),
-          comparer: StringComparer.Ordinal
-      );
+    Assert.Equal(
+      "Invalid input",
+      localizer.Get(key1),
+      StringComparer.Ordinal
+    );
 
-      // second.................................................
-      const string key2 = "unknownerror";
+    // second.................................................
+    const string key2 = "unknownerror";
 
-      // set thread's current culture to "ar"
-      CultureInfo.CurrentCulture = new CultureInfo(name: "ar");
+    // set thread's current culture to "ar"
+    CultureInfo.CurrentCulture = new CultureInfo("ar");
 
-      Assert.Equal(
-          expected: "خطأ غير معروف some word",
-          actual: localizer.GetFormat(key: key2, values: new object[]
-          {
-                    "some word"
-          }),
-          comparer: StringComparer.Ordinal
-      );
-
-      Assert.Equal(
-          expected: "Unbekannter Fehler test",
-          actual: localizer.GetFormat(culture: "de", key: key2, "test"),
-          comparer: StringComparer.Ordinal
-      );
-
-      // set threads current culture to "en"
-      CultureInfo.CurrentCulture = new CultureInfo(name: "en");
-
-      Assert.Equal(
-          expected: "Unknown error !!",
-          actual: localizer.GetFormat(key: key2, values: new object[]
-          {
-                    "!!"
-          }),
-          comparer: StringComparer.Ordinal
-      );
-
-      Assert.Equal(
-          expected: "Unbekannter Fehler !!",
-          actual: localizer.GetFormat(culture: "de", key: key2, "!!"),
-          comparer: StringComparer.Ordinal
-      );
-    }
-
-    [Fact]
-    public void CaseSensitive()
-    {
-      var localizer = GetLocalizer(caseSensitivity: PropertyCaseSensitivity.CaseSensitive);
-
-      // first...................................................
-      const string key1 = "InvalidInput";
-
-      // set thread's current culture to "ar"
-      CultureInfo.CurrentCulture = new CultureInfo(name: "ar");
-
-      Assert.Equal(
-          expected: "إدخال غير صالح",
-          actual: localizer.Get(key: key1),
-          comparer: StringComparer.Ordinal
-      );
-
-      Assert.Equal(
-          expected: "Ungültige Eingabe",
-          actual: localizer.Get(culture: "de", key: key1),
-          comparer: StringComparer.Ordinal
-      );
-
-      // set threads current culture to "en"
-      CultureInfo.CurrentCulture = new CultureInfo(name: "en");
-
-      Assert.Equal(
-          expected: "Invalid input",
-          actual: localizer.Get(key: key1),
-          comparer: StringComparer.Ordinal
-      );
-
-      // second..................................................
-      const string key2 = "unknownerror";
-
-      // set thread's current culture to "ar"
-      CultureInfo.CurrentCulture = new CultureInfo(name: "ar");
-
-      var x = localizer.GetFormat(key: key2, values: new object[]
+    Assert.Equal(
+      "خطأ غير معروف some word",
+      localizer.GetFormat(key2, new object[]
       {
-                "some word"
-      });
+        "some word"
+      }),
+      StringComparer.Ordinal
+    );
 
-      Assert.Equal(expected: key2, actual: x);
-    }
+    Assert.Equal(
+      "Unbekannter Fehler test",
+      localizer.GetFormat("de", key2, "test"),
+      StringComparer.Ordinal
+    );
 
-    [Fact]
-    public void Nested_CaseSensitive()
+    // set threads current culture to "en"
+    CultureInfo.CurrentCulture = new CultureInfo("en");
+
+    Assert.Equal(
+      "Unknown error !!",
+      localizer.GetFormat(key2, new object[]
+      {
+        "!!"
+      }),
+      StringComparer.Ordinal
+    );
+
+    Assert.Equal(
+      "Unbekannter Fehler !!",
+      localizer.GetFormat("de", key2, "!!"),
+      StringComparer.Ordinal
+    );
+  }
+
+  [Fact]
+  public void CaseSensitive()
+  {
+    var localizer = GetLocalizer(PropertyCaseSensitivity.CaseSensitive);
+
+    // first...................................................
+    const string key1 = "InvalidInput";
+
+    // set thread's current culture to "ar"
+    CultureInfo.CurrentCulture = new CultureInfo("ar");
+
+    Assert.Equal(
+      "إدخال غير صالح",
+      localizer.Get(key1),
+      StringComparer.Ordinal
+    );
+
+    Assert.Equal(
+      "Ungültige Eingabe",
+      localizer.Get("de", key1),
+      StringComparer.Ordinal
+    );
+
+    // set threads current culture to "en"
+    CultureInfo.CurrentCulture = new CultureInfo("en");
+
+    Assert.Equal(
+      "Invalid input",
+      localizer.Get(key1),
+      StringComparer.Ordinal
+    );
+
+    // second..................................................
+    const string key2 = "unknownerror";
+
+    // set thread's current culture to "ar"
+    CultureInfo.CurrentCulture = new CultureInfo("ar");
+
+    var x = localizer.GetFormat(key2, new object[]
     {
-      var localizer = GetLocalizer(caseSensitivity: PropertyCaseSensitivity.CaseSensitive);
+      "some word"
+    });
 
-      // set thread's current culture
-      CultureInfo.CurrentCulture = new CultureInfo(name: "de");
+    Assert.Equal(key2, x);
+  }
 
-      Assert.Equal(
-          expected: "Willkommen",
-          actual: localizer.Get(key: "home-page.title"),
-          comparer: StringComparer.Ordinal
-      );
+  [Fact]
+  public void Nested_CaseSensitive()
+  {
+    var localizer = GetLocalizer(PropertyCaseSensitivity.CaseSensitive);
 
-      Assert.Equal(
-          expected: "أهلا بك",
-          actual: localizer.Get(culture: "ar", key: "home-page.title"),
-          comparer: StringComparer.Ordinal
-      );
+    // set thread's current culture
+    CultureInfo.CurrentCulture = new CultureInfo("de");
 
-      Assert.Equal(
-          expected: "Etwas Text",
-          actual: localizer.Get(key: "home-page.body.text"),
-          comparer: StringComparer.Ordinal
-      );
+    Assert.Equal(
+      "Willkommen",
+      localizer.Get("home-page.title"),
+      StringComparer.Ordinal
+    );
 
-      Assert.Equal(
-          expected: "بعض النصوص",
-          actual: localizer.Get(culture: "ar", key: "home-page.body.text"),
-          comparer: StringComparer.Ordinal
-      );
-    }
+    Assert.Equal(
+      "أهلا بك",
+      localizer.Get("ar", "home-page.title"),
+      StringComparer.Ordinal
+    );
 
-    [Fact]
-    public void Nested_CaseInsensitive()
-    {
-      var localizer = GetLocalizer(caseSensitivity: PropertyCaseSensitivity.CaseInsensitive);
+    Assert.Equal(
+      "Etwas Text",
+      localizer.Get("home-page.body.text"),
+      StringComparer.Ordinal
+    );
 
-      // set thread's current culture
-      CultureInfo.CurrentCulture = new CultureInfo(name: "de");
+    Assert.Equal(
+      "بعض النصوص",
+      localizer.Get("ar", "home-page.body.text"),
+      StringComparer.Ordinal
+    );
+  }
 
-      Assert.Equal(
-          expected: "Willkommen",
-          actual: localizer.Get(key: "home-page.title"),
-          comparer: StringComparer.Ordinal
-      );
+  [Fact]
+  public void Nested_CaseInsensitive()
+  {
+    var localizer = GetLocalizer(PropertyCaseSensitivity.CaseInsensitive);
 
-      Assert.Equal(
-          expected: "أهلا بك",
-          actual: localizer.Get(culture: "ar", key: "home-page.title"),
-          comparer: StringComparer.Ordinal
-      );
+    // set thread's current culture
+    CultureInfo.CurrentCulture = new CultureInfo("de");
 
-      Assert.Equal(
-          expected: "Etwas Text",
-          actual: localizer.Get(key: "home-page.body.text"),
-          comparer: StringComparer.Ordinal
-      );
+    Assert.Equal(
+      "Willkommen",
+      localizer.Get("home-page.title"),
+      StringComparer.Ordinal
+    );
 
-      Assert.Equal(
-          expected: "بعض النصوص",
-          actual: localizer.Get(culture: "ar", key: "home-page.body.text"),
-          comparer: StringComparer.Ordinal
-      );
-    }
+    Assert.Equal(
+      "أهلا بك",
+      localizer.Get("ar", "home-page.title"),
+      StringComparer.Ordinal
+    );
 
-    [Fact]
-    public void GetAll()
-    {
-      var localizer = GetLocalizer(caseSensitivity: PropertyCaseSensitivity.CaseSensitive);
-      CultureInfo.CurrentCulture = new CultureInfo(name: "de");
-      var allDe = localizer.GetAll();
+    Assert.Equal(
+      "Etwas Text",
+      localizer.Get("home-page.body.text"),
+      StringComparer.Ordinal
+    );
 
-      Assert.Equal(
-          expected: 4,
-          actual: allDe.Keys.Count
-      );
+    Assert.Equal(
+      "بعض النصوص",
+      localizer.Get("ar", "home-page.body.text"),
+      StringComparer.Ordinal
+    );
+  }
 
-      Assert.Equal(
-          expected: "Ungültige Eingabe",
-          actual: allDe[key: "InvalidInput"],
-          comparer: StringComparer.Ordinal
-      );
+  [Fact]
+  public void GetAll()
+  {
+    var localizer = GetLocalizer(PropertyCaseSensitivity.CaseSensitive);
+    CultureInfo.CurrentCulture = new CultureInfo("de");
+    var allDe = localizer.GetAll();
 
-      Assert.Equal(
-          expected: "Unbekannter Fehler {0}",
-          actual: allDe[key: "UnknownError"],
-          comparer: StringComparer.Ordinal
-      );
+    Assert.Equal(
+      4,
+      allDe.Keys.Count
+    );
 
-      Assert.Equal(
-          expected: "Willkommen",
-          actual: allDe[key: "home-page.title"],
-          comparer: StringComparer.Ordinal
-      );
+    Assert.Equal(
+      "Ungültige Eingabe",
+      allDe["InvalidInput"],
+      StringComparer.Ordinal
+    );
 
-      Assert.Equal(
-          expected: "Etwas Text",
-          actual: allDe[key: "home-page.body.text"],
-          comparer: StringComparer.Ordinal
-      );
-    }
+    Assert.Equal(
+      "Unbekannter Fehler {0}",
+      allDe["UnknownError"],
+      StringComparer.Ordinal
+    );
+
+    Assert.Equal(
+      "Willkommen",
+      allDe["home-page.title"],
+      StringComparer.Ordinal
+    );
+
+    Assert.Equal(
+      "Etwas Text",
+      allDe["home-page.body.text"],
+      StringComparer.Ordinal
+    );
   }
 }

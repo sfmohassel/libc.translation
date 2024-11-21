@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0</TargetFrameworks>
-		<Version>7.1.1</Version>
+		<TargetFrameworks>netstandard2.0;net5.0;net6.0;net8.0</TargetFrameworks>
+		<Version>7.1.2</Version>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>Saeed Farahi Mohassel</Authors>
 		<Product>A library to help you implement translation using json files to replace .resx files in .net standard projects</Product>
@@ -16,7 +16,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Text.Json" Version="8.0.0" />
+		<PackageReference Include="System.Text.Json" Version="9.0.0" />
 	</ItemGroup>
 
 </Project>
